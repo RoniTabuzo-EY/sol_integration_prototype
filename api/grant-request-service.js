@@ -13,7 +13,7 @@ app.use(bodyParser.json())
 app.post('/createGrantRequest', function (req, res) {
    
    //call smart contract 
-   var isSuccess = grantRequestClient.fnRegister(req);
+   var isSuccess = grantRequestClient.register(req);
    res.end("isSuccess:" + isSuccess);
 
    //call TGS
@@ -31,7 +31,7 @@ app.post('/createGrantRequest', function (req, res) {
 app.put('/updateGrantRequest', function (req, res) {
 
    //call smart contract 
-   var isSuccess = grantRequestClient.fnUpdateCourseAssessment(req);
+   var isSuccess = grantRequestClient.updateCourseAssessment(req);
    res.end("isSuccess:" + isSuccess);
 
    //call TGS
