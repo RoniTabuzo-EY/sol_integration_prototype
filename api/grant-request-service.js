@@ -13,7 +13,15 @@ app.use(bodyParser.json())
 app.post('/createGrantRequest', function (req, res) {
    
    //call smart contract 
-   var isSuccess = grantRequestClient.register(req);
+   var isSuccess = false;
+   grantRequestClient.register(req)
+   .then(function (res) {
+      console.log(res);
+      isSuccess = true;  
+   })
+   .catch(function (err) {
+         console.log(err);
+   });
    res.end("isSuccess:" + isSuccess);
 
    //call TGS
@@ -31,7 +39,15 @@ app.post('/createGrantRequest', function (req, res) {
 app.put('/updateGrantRequest', function (req, res) {
 
    //call smart contract 
-   var isSuccess = grantRequestClient.updateCourseAssessment(req);
+   var isSuccess = false;
+   grantRequestClient.updateCourseAssessment(req)
+   .then(function (res) {
+      console.log(res);
+      isSuccess = true;  
+   })
+   .catch(function (err) {
+         console.log(err);
+   });
    res.end("isSuccess:" + isSuccess);
 
    //call TGS
