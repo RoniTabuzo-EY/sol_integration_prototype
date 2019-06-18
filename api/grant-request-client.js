@@ -25,7 +25,6 @@ let claimInstance;
 module.exports = {
     register : async (req) => {
         console.log('Start Register Course.');
-        var isSuccess = false;
         let response = await claimInstance.registerCourseApplicant(req.body.GrantRequest.caseId, req.body.GrantRequest.courseId, req.body.GrantRequest.tpId, req.body.GrantRequest.tpName, req.body.GrantRequest.courseFee);
         if (response.err) {
             console.log('Error in Register Course.' + err);
@@ -43,16 +42,12 @@ module.exports = {
             }
             else {
                 console.log('Fetched Register Course Applicant Response.');
-                isSuccess = true;
             }
         }
-        return isSuccess;
     },
 
     updateCourseAssessment : async (req) => {
         console.log('Start Update Course Assessment.');
-        var isSuccess = false;
-    
         let response = await claimInstance.updateCourseAssessment(req.body.GrantRequest.caseId, req.body.GrantRequest.nettFee, 
             req.body.GrantRequest.attendance, req.body.GrantRequest.assessment);
     
@@ -61,8 +56,6 @@ module.exports = {
         }
         else {
             console.log('Fetched Update Course Assessment Response.');
-            isSuccess = true;
         }
-        return isSuccess;
     }
 }
