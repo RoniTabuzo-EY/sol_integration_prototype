@@ -6,10 +6,8 @@ const path = require('path');
 
 const claimJSON  = require(path.join(__dirname, '../build/contracts/Claim.json'));
 
-//set provider
-
 var claimContract = contract(claimJSON);
-claimContract.setProvider(web3.currentProvider);
+claimContract.setProvider(new Web3.providers.HttpProvider('http://127.0.0.1:8545'));
 let claimInstance;
 
 (async () => {
