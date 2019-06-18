@@ -1,48 +1,86 @@
-const express = require('express');
-const app = express();
-const bodyParser = require('body-parser');
-const basicAuth =  require('basic-auth');
-const dateFormat = require('dateformat'); 
+const contract = require('truffle-contract');
+const Web3 = require('web3');
+const path = require('path');
+const dateFormat = require('dateformat');
 
-var grantRequestClient = require('./grant-request-client');
-var tgsService = require('./tgs-service');
+const claimJSON  = require(path.join(__dirname, '../build/contracts/Claim.json'));
 
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+const web3Provider = new Web3.providers.HttpProvider('http://127.0.0.1:8545');
+web3 = new Web3(web3Provider);
 
-app.post('/createGrantRequest', function (req, res) {
-   
-   //call smart contract 
-   var isSuccess = grantRequestClient.register(req);
-   res.end("isSuccess:" + isSuccess);
+var claimContract = contract(claimJSON);
+claimContract.setProvider(web3Provider);
+let claimInstance;
 
-   //call TGS
-   var applicantDOB = dateFormat(req.body.GrantRequest.applicantDOB, "isoDate");   
-   var dateOfApplication = dateFormat(req.body.GrantRequest.dateOfApplication, "isoDate");
-   
-   var param = "?CourseID=" + req.body.GrantRequest.courseId + "&CaseID=" + req.body.GrantRequest.caseId + "&Name=" + req.body.GrantRequest.applicantName 
-      +"&NRIC=" + req.body.GrantRequest.applicantNRIC + "&DateOfBirth=" + applicantDOB + "&TpID="+ req.body.GrantRequest.tpId
-      +"&TpName=" + req.body.GrantRequest.tpName + "&DateOfApplication=" + dateOfApplication +"&CourseFee=" + req.body.GrantRequest.courseFee
-      +"&Citizenship=" + req.body.GrantRequest.applicantCitizenship;
-   
-   tgsService.fnTGSCreateGrantRequest(param);
-})
+(async () => {
+    var account = web3.eth.accounts[0]; 
+    claimContract.defaults({from: account});
+    claimInstance = await claimContract.deployed();
+    console.log('Connected to Claim contract.');
+})().catch(err => {  
+    console.error('Failed to connect to Claim contract.');  
+    console.error(err);
+});
 
-app.put('/updateGrantRequest', function (req, res) {
+async (req) => function fnRegisterCourse(req){
+    console.log('Start Register Course.');
+    var isSuccess = false;
+    let response = await claimInstance.registerCourseApplicant(req.body.GrantRequest.caseId, req.body.GrantRequest.courseId, req.body.GrantRequest.tpId, req.body.GrantRequest.tpName, req.body.GrantRequest.courseFee);
+    if (response.err) {
+        console.log('Error in Register Course.' + err);
+    }
+    else {
+        console.log('Fetched Register Course Response.');
+        isSuccess = true;
+    }
+    return isSuccess;
+}
 
-   //call smart contract 
-   var isSuccess = grantRequestClient.updateCourseAssessment(req);
-   res.end("isSuccess:" + isSuccess);
+async (req) => function fnRegisterCourseApplicant(req){
+    console.log('Start Register Course Applicant.');
+    var isSuccess = false;
 
-   //call TGS
-   var param = "?CaseID="+ req.body.GrantRequest.caseId + "&NettFee=" + req.body.GrantRequest.nettFee 
-   + "&Attendance=" + req.body.GrantRequest.attendance + "&Assessment=" + req.body.GrantRequest.assessment;
+    var applicantDOB = dateFormat(req.body.GrantRequest.applicantDOB, "isoDate");   
+    var dateOfApplication = dateFormat(req.body.GrantRequest.dateOfApplication, "isoDate");
 
-   tgsService.fnTGSUpdateGrantRequest(param);
-})
+    let response = await claimInstance.registerCourseApplicant(req.body.GrantRequest.caseId, req.body.GrantRequest.applicantName, req.body.GrantRequest.applicantNRIC,
+        req.body.GrantRequest.applicantCitizenship, dateOfApplication, applicantDOB);
 
-var server = app.listen(8082, function () {
-   var host = server.address().address
-   var port = 8082
-   console.log("App listening at http://%s:%s", host, port)
-})
+    if (response.err) {
+        console.log('Error in Register Course Applicant.' + err);
+    }
+    else {
+        console.log('Fetched Register Course Applicant Response.');
+        isSuccess = true;
+    }
+    return isSuccess;
+}
+
+async (req) => function fnUpdateCourseAssessment(req){
+    console.log('Start Update Course Assessment.');
+    var isSuccess = false;
+
+    let response = await claimInstance.updateCourseAssessment(req.body.GrantRequest.caseId, req.body.GrantRequest.nettFee, 
+        req.body.GrantRequest.attendance, req.body.GrantRequest.assessment);
+
+    if (response.err) {
+        console.log('Error in Update Course Assessment.' + err);
+    }
+    else {
+        console.log('Fetched Update Course Assessment Response.');
+        isSuccess = true;
+    }
+    return isSuccess;
+}
+
+module.exports = {
+    register : function fnRegister(req) {        
+        if(fnRegisterCourse(req)){
+            return fnRegisterCourseApplicant(req);
+        }
+    },
+
+    updateCourseAssessment : function fnUpdateAssessment(req) => {        
+        return(fnUpdateCourseAssessment(req));
+    }
+}
