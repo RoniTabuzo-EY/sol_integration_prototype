@@ -13,16 +13,9 @@ app.use(bodyParser.json())
 app.post('/createGrantRequest', function (req, res) {
    
    //call smart contract 
-   var isSuccess = false;
-   grantRequestClient.register(req)
-   .then(function (res) {
-      console.log(res);
-      isSuccess = true;  
-   })
-   .catch(function (err) {
-         console.log(err);
-   });
-   res.end("isSuccess:" + isSuccess);
+   grantRequestClient.register()
+   .then(r => res.end("isSuccess:" + true))
+   .catch(e => res.end("isSuccess:" + false));
 
    //call TGS
    var applicantDOB = dateFormat(req.body.GrantRequest.applicantDOB, "isoDate");   
@@ -39,16 +32,10 @@ app.post('/createGrantRequest', function (req, res) {
 app.put('/updateGrantRequest', function (req, res) {
 
    //call smart contract 
-   var isSuccess = false;
-   grantRequestClient.updateCourseAssessment(req)
-   .then(function (res) {
-      console.log(res);
-      isSuccess = true;  
-   })
-   .catch(function (err) {
-         console.log(err);
-   });
-   res.end("isSuccess:" + isSuccess);
+   grantRequestClient.updateCourseAssessment()
+   .then(r => res.end("isSuccess:" + true))
+   .catch(e => res.end("isSuccess:" + false));
+  
 
    //call TGS
    var param = "?CaseID="+ req.body.GrantRequest.caseId + "&NettFee=" + req.body.GrantRequest.nettFee 
