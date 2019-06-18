@@ -1,10 +1,12 @@
-import contract from 'truffle-contract';
-import web3 from '../web3';
+//import contract from 'truffle-contract';
+//import web3 from '../web3';
+const contract = require('truffle-contract');
+const Web3 = require('web3');
 
 ClaimJSON  = require(path.join(__dirname, 'build/contracts/Claim.json'));
 
 //set provider
-const provider    = new Web3.providers.HttpProvider("http://localhost:8545");
+const provider = new Web3.providers.HttpProvider("http://localhost:8545");
 var Claim = contract(ClaimJSON);
 Claim.setProvider(provider);
 
