@@ -1,66 +1,77 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.4.0;
 
 contract Claim{
-    struct CourseApplication{
+    struct CourseRegistration{
       uint caseId;
-      string courseId;
-      /*string applicantName;
-      uint age;
-      uint courseFee;*/
+      uint courseId;
+      uint tpId;
+      string tpName;
+      uint courseFee;
+    }
+    
+    struct CourseApplicant{
+      uint caseId;
+      string applicantName;
+      string applicantNRIC;
+      string applicantCitizenship;
+      string dateOfApplication;
+      string applicantDateOfBirth;
     }
 
-    struct CourseUpdates{
+    struct CourseAssessment{
       uint caseId;
       uint netfee;
       uint attendancePercentage;
       uint assessmentPercentage;
     }
 
-    mapping(uint => CourseApplication) public courseApplications;
-    mapping(uint => CourseUpdates) public courseUpdates;
+    mapping(uint => CourseRegistration) public courseRegistrations;
+    mapping(uint => CourseApplicant) public courseApplicants;
+    mapping(uint => CourseAssessment) public courseAssessments;
 
-    event recordCourseApplicationEvent (
-        uint caseId,
-        string courseId
-        /*,string applicantName,
-        uint age,
-        uint courseFee*/
-    );
-
-    event recordCourseUpdatesEvent (
-        uint caseId,
-        uint netfee,
-        uint attendancePercentage,
-        uint assessmentPercentage
-    );
-
-    function recordCourseApplication
-        (uint _caseId, string memory _courseId
-        /*,string memory _applicantName, uint _age, uint _courseFee*/
-        )public{
-         courseApplications[_caseId] = CourseApplication({
+    function registerCourse
+        (uint _caseId,
+          uint _courseId,
+          uint _tpId,
+          string _tpName,
+          uint _courseFee) 
+    public{
+         courseRegistrations[_caseId] = CourseRegistration({
            courseId: _courseId,
-           caseId: _caseId
-           /*,applicantName: _applicantName,
-           age: _age,
-           courseFee: _courseFee*/
+           caseId: _caseId,
+           tpId: _tpId,
+           tpName: _tpName,
+           courseFee: _courseFee
          });
-
-         emit recordCourseApplicationEvent(_caseId, _courseId
-            /*,_applicantName, _age, _courseFee*/
-         );
+    }
+    
+    function registerCourseApplicant
+        (uint _caseId,
+          string _applicantName,
+          string _applicantNRIC,
+          string _applicantCitizenship,
+          string _dateOfApplication,
+          string _applicantDateOfBirth) 
+    public{
+         courseApplicants[_caseId] = CourseApplicant({
+          caseId: _caseId,
+          applicantName: _applicantName,
+          applicantNRIC: _applicantNRIC,
+          applicantCitizenship: _applicantCitizenship,
+          dateOfApplication: _dateOfApplication,
+          applicantDateOfBirth: _applicantDateOfBirth
+         });
     }
 
-    function recordCourseUpdates
+    function updateCourseAssessment
         (uint _caseId, uint _netfee, uint _attendancePercentage, uint _assessmentPercentage)
         public{
-         courseUpdates[_caseId] = CourseUpdates({
-           caseId: _caseId,
-           netfee: _netfee,
-           attendancePercentage: _attendancePercentage,
-           assessmentPercentage: _assessmentPercentage
+         courseAssessments[_caseId] = CourseAssessment({
+          caseId: _caseId,
+          netfee: _netfee,
+          attendancePercentage: _attendancePercentage,
+          assessmentPercentage: _assessmentPercentage
          });
 
-         emit recordCourseUpdatesEvent(_caseId, _netfee, _attendancePercentage, _assessmentPercentage);
     }
 }
