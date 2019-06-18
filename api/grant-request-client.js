@@ -22,65 +22,47 @@ let claimInstance;
     console.error(err);
 });
 
-async (req) => function fnRegisterCourse(req){
-    console.log('Start Register Course.');
-    var isSuccess = false;
-    let response = await claimInstance.registerCourseApplicant(req.body.GrantRequest.caseId, req.body.GrantRequest.courseId, req.body.GrantRequest.tpId, req.body.GrantRequest.tpName, req.body.GrantRequest.courseFee);
-    if (response.err) {
-        console.log('Error in Register Course.' + err);
-    }
-    else {
-        console.log('Fetched Register Course Response.');
-        isSuccess = true;
-    }
-    return isSuccess;
-}
-
-async (req) => function fnRegisterCourseApplicant(req){
-    console.log('Start Register Course Applicant.');
-    var isSuccess = false;
-
-    var applicantDOB = dateFormat(req.body.GrantRequest.applicantDOB, "isoDate");   
-    var dateOfApplication = dateFormat(req.body.GrantRequest.dateOfApplication, "isoDate");
-
-    let response = await claimInstance.registerCourseApplicant(req.body.GrantRequest.caseId, req.body.GrantRequest.applicantName, req.body.GrantRequest.applicantNRIC,
-        req.body.GrantRequest.applicantCitizenship, dateOfApplication, applicantDOB);
-
-    if (response.err) {
-        console.log('Error in Register Course Applicant.' + err);
-    }
-    else {
-        console.log('Fetched Register Course Applicant Response.');
-        isSuccess = true;
-    }
-    return isSuccess;
-}
-
-async (req) => function fnUpdateCourseAssessment(req){
-    console.log('Start Update Course Assessment.');
-    var isSuccess = false;
-
-    let response = await claimInstance.updateCourseAssessment(req.body.GrantRequest.caseId, req.body.GrantRequest.nettFee, 
-        req.body.GrantRequest.attendance, req.body.GrantRequest.assessment);
-
-    if (response.err) {
-        console.log('Error in Update Course Assessment.' + err);
-    }
-    else {
-        console.log('Fetched Update Course Assessment Response.');
-        isSuccess = true;
-    }
-    return isSuccess;
-}
-
 module.exports = {
-    register : function fnRegister(req) {        
-        if(fnRegisterCourse(req)){
-            return fnRegisterCourseApplicant(req);
+    register : async (req) => {
+        console.log('Start Register Course.');
+        var isSuccess = false;
+        let response = await claimInstance.registerCourseApplicant(req.body.GrantRequest.caseId, req.body.GrantRequest.courseId, req.body.GrantRequest.tpId, req.body.GrantRequest.tpName, req.body.GrantRequest.courseFee);
+        if (response.err) {
+            console.log('Error in Register Course.' + err);
         }
+        else {
+            console.log('Fetched Register Course Response.');
+            var applicantDOB = dateFormat(req.body.GrantRequest.applicantDOB, "isoDate");   
+            var dateOfApplication = dateFormat(req.body.GrantRequest.dateOfApplication, "isoDate");
+
+            response = await claimInstance.registerCourseApplicant(req.body.GrantRequest.caseId, req.body.GrantRequest.applicantName, req.body.GrantRequest.applicantNRIC,
+                req.body.GrantRequest.applicantCitizenship, dateOfApplication, applicantDOB);
+
+            if (response.err) {
+                console.log('Error in Register Course Applicant.' + err);
+            }
+            else {
+                console.log('Fetched Register Course Applicant Response.');
+                isSuccess = true;
+            }
+        }
+        return isSuccess;
     },
 
-    updateCourseAssessment : function fnUpdateAssessment(req){        
-        return(fnUpdateCourseAssessment(req));
+    updateCourseAssessment : async (req) => {
+        console.log('Start Update Course Assessment.');
+        var isSuccess = false;
+    
+        let response = await claimInstance.updateCourseAssessment(req.body.GrantRequest.caseId, req.body.GrantRequest.nettFee, 
+            req.body.GrantRequest.attendance, req.body.GrantRequest.assessment);
+    
+        if (response.err) {
+            console.log('Error in Update Course Assessment.' + err);
+        }
+        else {
+            console.log('Fetched Update Course Assessment Response.');
+            isSuccess = true;
+        }
+        return isSuccess;
     }
 }
