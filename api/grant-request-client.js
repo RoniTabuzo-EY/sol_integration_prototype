@@ -1,4 +1,6 @@
-const web3 = require('web3');
+import contract from 'truffle-contract';
+import web3 from '../web3';
+
 ClaimJSON  = require(path.join(__dirname, 'build/contracts/Claim.json'));
 
 //set provider
