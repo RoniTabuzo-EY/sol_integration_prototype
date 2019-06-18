@@ -22,7 +22,7 @@ let claimInstance;
     console.error(err);
 });
 
-function fnRegisterCourse(req){
+async (req) => function fnRegisterCourse(req){
     console.log('Start Register Course.');
     var isSuccess = false;
     let response = await claimInstance.registerCourseApplicant(req.body.GrantRequest.caseId, req.body.GrantRequest.courseId, req.body.GrantRequest.tpId, req.body.GrantRequest.tpName, req.body.GrantRequest.courseFee);
@@ -36,14 +36,14 @@ function fnRegisterCourse(req){
     return isSuccess;
 }
 
-function fnRegisterCourseApplicant(req){
+async (req) => function fnRegisterCourseApplicant(req){
     console.log('Start Register Course Applicant.');
     var isSuccess = false;
 
     var applicantDOB = dateFormat(req.body.GrantRequest.applicantDOB, "isoDate");   
     var dateOfApplication = dateFormat(req.body.GrantRequest.dateOfApplication, "isoDate");
 
-    let response = await claimInstance.registerCourse(req.body.GrantRequest.caseId, req.body.GrantRequest.applicantName, req.body.GrantRequest.applicantNRIC,
+    let response = await claimInstance.registerCourseApplicant(req.body.GrantRequest.caseId, req.body.GrantRequest.applicantName, req.body.GrantRequest.applicantNRIC,
         req.body.GrantRequest.applicantCitizenship, dateOfApplication, applicantDOB);
 
     if (response.err) {
@@ -56,11 +56,11 @@ function fnRegisterCourseApplicant(req){
     return isSuccess;
 }
 
-function fnUpdateCourseAssessment(req){
+async (req) => function fnUpdateCourseAssessment(req){
     console.log('Start Update Course Assessment.');
     var isSuccess = false;
 
-    let response = await claimInstance.registerCourse(req.body.GrantRequest.caseId, req.body.GrantRequest.nettFee, 
+    let response = await claimInstance.updateCourseAssessment(req.body.GrantRequest.caseId, req.body.GrantRequest.nettFee, 
         req.body.GrantRequest.attendance, req.body.GrantRequest.assessment);
 
     if (response.err) {
@@ -74,13 +74,13 @@ function fnUpdateCourseAssessment(req){
 }
 
 module.exports = {
-    fnRegister : async (req) => {        
+    register : function fnRegister(req) {        
         if(fnRegisterCourse(req)){
             return fnRegisterCourseApplicant(req);
         }
     },
 
-    fnUpdateCourseAssessment : async (req) => {        
-        return(fnRegisterCourse(req));
+    updateCourseAssessment : function fnUpdateAssessment(req){        
+        return(fnUpdateCourseAssessment(req));
     }
 }
