@@ -2,6 +2,7 @@
 //import web3 from '../web3';
 const contract = require('truffle-contract');
 const Web3 = require('web3');
+const path = require('path');
 
 ClaimJSON  = require(path.join(__dirname, 'build/contracts/Claim.json'));
 
