@@ -6,12 +6,16 @@ const path = require('path');
 
 const claimJSON  = require(path.join(__dirname, '../build/contracts/Claim.json'));
 
+const web3Provider = new Web3.providers.HttpProvider('http://127.0.0.1:8545');
+web3 = new Web3(web3Provider);
+
 var claimContract = contract(claimJSON);
-claimContract.setProvider(new Web3.providers.HttpProvider('http://127.0.0.1:8545'));
+claimContract.setProvider(web3Provider);
 let claimInstance;
 
 (async () => {
-    const account = (await web3.eth.getAccounts())[0];      
+    const account = (await web3.eth.getAccounts())[0]; 
+    //const account = web3.eth.accounts[0];     
     claimInstance = await claimContract.deployed();
     console.log('Connected to Claim contract.');
 })().catch(err => {  
@@ -20,7 +24,7 @@ let claimInstance;
 });
 
 module.exports = {
-    fnRegisterCourse : async (tokenId, data, user) => {
+    fnRegisterCourse : async (req) => {
         let response = await claimInstance.registerCourse(req.body.GrantRequest.caseId, req.body.GrantRequest.courseId, req.body.GrantRequest.tpId, req.body.GrantRequest.tpName, req.body.GrantRequest.courseFee);
         if (response.err) { console.log('error');}
         else { console.log('fetched response')};
@@ -52,3 +56,4 @@ module.exports = {
     // }
 
 }
+
