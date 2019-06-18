@@ -25,11 +25,11 @@ let claimInstance;
 module.exports = {
     register : async (req) => {
         console.log('Start Register Course.');
-        let response = await claimInstance.registerCourseApplicant(req.body.GrantRequest.caseId, req.body.GrantRequest.courseId, req.body.GrantRequest.tpId, req.body.GrantRequest.tpName, req.body.GrantRequest.courseFee);
+        let response = await claimInstance.registerCourse(req.body.GrantRequest.caseId, req.body.GrantRequest.courseId, req.body.GrantRequest.tpId, req.body.GrantRequest.tpName, req.body.GrantRequest.courseFee);
         if (response.err) {
-            console.log('Error in Register Course.' + err);
+            throw new Error("Error in Register Course.");
         }
-        else {
+        
             console.log('Fetched Register Course Response.');
             var applicantDOB = dateFormat(req.body.GrantRequest.applicantDOB, "isoDate");   
             var dateOfApplication = dateFormat(req.body.GrantRequest.dateOfApplication, "isoDate");
@@ -38,12 +38,9 @@ module.exports = {
                 req.body.GrantRequest.applicantCitizenship, dateOfApplication, applicantDOB);
 
             if (response.err) {
-                console.log('Error in Register Course Applicant.' + err);
+                throw new Error("Error in Register Course Applicant.");
             }
-            else {
                 console.log('Fetched Register Course Applicant Response.');
-            }
-        }
     },
 
     updateCourseAssessment : async (req) => {
@@ -52,10 +49,8 @@ module.exports = {
             req.body.GrantRequest.attendance, req.body.GrantRequest.assessment);
     
         if (response.err) {
-            console.log('Error in Update Course Assessment.' + err);
+            throw new Error("Error in Update Course Assessment Response.");
         }
-        else {
             console.log('Fetched Update Course Assessment Response.');
-        }
     }
 }
