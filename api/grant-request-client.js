@@ -1,8 +1,7 @@
-//import contract from 'truffle-contract';
-//import web3 from '../web3';
 const contract = require('truffle-contract');
 const Web3 = require('web3');
 const path = require('path');
+const dateFormat = require('dateformat');
 
 const claimJSON  = require(path.join(__dirname, '../build/contracts/Claim.json'));
 
@@ -14,8 +13,8 @@ claimContract.setProvider(web3Provider);
 let claimInstance;
 
 (async () => {
-    const account = (await web3.eth.getAccounts())[0]; 
-    //const account = web3.eth.accounts[0];     
+    var account = web3.eth.accounts[0]; 
+    claimContract.defaults({from: account});
     claimInstance = await claimContract.deployed();
     console.log('Connected to Claim contract.');
 })().catch(err => {  
@@ -23,37 +22,65 @@ let claimInstance;
     console.error(err);
 });
 
-module.exports = {
-    fnRegisterCourse : async (req) => {
-        let response = await claimInstance.registerCourse(req.body.GrantRequest.caseId, req.body.GrantRequest.courseId, req.body.GrantRequest.tpId, req.body.GrantRequest.tpName, req.body.GrantRequest.courseFee);
-        if (response.err) { console.log('error');}
-        else { console.log('fetched response')};
-        return response;
+function fnRegisterCourse(req){
+    console.log('Start Register Course.');
+    var isSuccess = false;
+    let response = await claimInstance.registerCourseApplicant(req.body.GrantRequest.caseId, req.body.GrantRequest.courseId, req.body.GrantRequest.tpId, req.body.GrantRequest.tpName, req.body.GrantRequest.courseFee);
+    if (response.err) {
+        console.log('Error in Register Course.' + err);
     }
-      
-
-
-    // fnRegisterCourse : async function registerCourse(req){
-    //     let claimInstance = await Claim.deployed();
-    //     let response = await claimInstance.registerCourse(req.body.GrantRequest.caseId, req.body.GrantRequest.courseId, req.body.GrantRequest.tpId, req.body.GrantRequest.tpName, req.body.GrantRequest.courseFee);
-    //     if (response.err) { console.log('error');}
-    //     else { console.log('fetched response')};
-    // }
-
-    // fnRegisterCourse : function registerCourse(req){
-        
-    //     Claim.deployed().then(function(instance) {
-    //         return instance.registerCourse(req.body.GrantRequest.caseId, req.body.GrantRequest.courseId, req.body.GrantRequest.tpId, req.body.GrantRequest.tpName, req.body.GrantRequest.courseFee)
-        
-    //      }).then(function(result) {
-    //            console.log(result);
-    //            isSuccess = true;             
-    //      }, function(error) {
-    //            console.log(error);
-    //      }); 
-
-    //      return isSuccess;
-    // }
-
+    else {
+        console.log('Fetched Register Course Response.');
+        isSuccess = true;
+    }
+    return isSuccess;
 }
 
+function fnRegisterCourseApplicant(req){
+    console.log('Start Register Course Applicant.');
+    var isSuccess = false;
+
+    var applicantDOB = dateFormat(req.body.GrantRequest.applicantDOB, "isoDate");   
+    var dateOfApplication = dateFormat(req.body.GrantRequest.dateOfApplication, "isoDate");
+
+    let response = await claimInstance.registerCourse(req.body.GrantRequest.caseId, req.body.GrantRequest.applicantName, req.body.GrantRequest.applicantNRIC,
+        req.body.GrantRequest.applicantCitizenship, dateOfApplication, applicantDOB);
+
+    if (response.err) {
+        console.log('Error in Register Course Applicant.' + err);
+    }
+    else {
+        console.log('Fetched Register Course Applicant Response.');
+        isSuccess = true;
+    }
+    return isSuccess;
+}
+
+function fnUpdateCourseAssessment(req){
+    console.log('Start Update Course Assessment.');
+    var isSuccess = false;
+
+    let response = await claimInstance.registerCourse(req.body.GrantRequest.caseId, req.body.GrantRequest.nettFee, 
+        req.body.GrantRequest.attendance, req.body.GrantRequest.assessment);
+
+    if (response.err) {
+        console.log('Error in Update Course Assessment.' + err);
+    }
+    else {
+        console.log('Fetched Update Course Assessment Response.');
+        isSuccess = true;
+    }
+    return isSuccess;
+}
+
+module.exports = {
+    fnRegister : async (req) => {        
+        if(fnRegisterCourse(req)){
+            return fnRegisterCourseApplicant(req);
+        }
+    },
+
+    fnUpdateCourseAssessment : async (req) => {        
+        return(fnRegisterCourse(req));
+    }
+}
