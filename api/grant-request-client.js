@@ -4,21 +4,39 @@ const contract = require('truffle-contract');
 const Web3 = require('web3');
 const path = require('path');
 
-ClaimJSON  = require(path.join(__dirname, 'build/contracts/Claim.json'));
+const claimJSON  = require(path.join(__dirname, '../build/contracts/Claim.json'));
 
 //set provider
-const provider = new Web3.providers.HttpProvider("http://localhost:8545");
-var Claim = contract(ClaimJSON);
-Claim.setProvider(provider);
+
+var claimContract = contract(claimJSON);
+claimContract.setProvider(web3.currentProvider);
+let claimInstance;
+
+(async () => {
+    const account = (await web3.eth.getAccounts())[0];      
+    claimInstance = await claimContract.deployed();
+    console.log('Connected to Claim contract.');
+})().catch(err => {  
+    console.error('Failed to connect to Claim contract.');  
+    console.error(err);
+});
 
 module.exports = {
-
-    fnRegisterCourse : async function registerCourse(req){
-        let claimInstance = await Claim.deployed();
+    fnRegisterCourse : async (tokenId, data, user) => {
         let response = await claimInstance.registerCourse(req.body.GrantRequest.caseId, req.body.GrantRequest.courseId, req.body.GrantRequest.tpId, req.body.GrantRequest.tpName, req.body.GrantRequest.courseFee);
         if (response.err) { console.log('error');}
         else { console.log('fetched response')};
+        return response;
     }
+      
+
+
+    // fnRegisterCourse : async function registerCourse(req){
+    //     let claimInstance = await Claim.deployed();
+    //     let response = await claimInstance.registerCourse(req.body.GrantRequest.caseId, req.body.GrantRequest.courseId, req.body.GrantRequest.tpId, req.body.GrantRequest.tpName, req.body.GrantRequest.courseFee);
+    //     if (response.err) { console.log('error');}
+    //     else { console.log('fetched response')};
+    // }
 
     // fnRegisterCourse : function registerCourse(req){
         
@@ -36,4 +54,3 @@ module.exports = {
     // }
 
 }
-
