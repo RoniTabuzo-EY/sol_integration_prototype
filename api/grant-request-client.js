@@ -25,32 +25,65 @@ let claimInstance;
 module.exports = {
     register : async (req) => {
         console.log('Start Register Course.');
+        var isSuccess = false;
+
         let response = await claimInstance.registerCourse(req.body.GrantRequest.caseId, req.body.GrantRequest.courseId, req.body.GrantRequest.tpId, req.body.GrantRequest.tpName, req.body.GrantRequest.courseFee);
         if (response.err) {
-            throw new Error("Error in Register Course.");
+            console.log('Error in Register Course.' + err);
         }
-        
+        else {
             console.log('Fetched Register Course Response.');
             var applicantDOB = dateFormat(req.body.GrantRequest.applicantDOB, "isoDate");   
             var dateOfApplication = dateFormat(req.body.GrantRequest.dateOfApplication, "isoDate");
 
-            response = await claimInstance.registerCourseApplicant(req.body.GrantRequest.caseId, req.body.GrantRequest.applicantName, req.body.GrantRequest.applicantNRIC,
+            response = await claimInstance.registerCourseApplicant(req.body.GrantRequest.caseId, req.body.GrantRequest.courseId, req.body.GrantRequest.applicantName, req.body.GrantRequest.applicantNRIC,
                 req.body.GrantRequest.applicantCitizenship, dateOfApplication, applicantDOB);
 
             if (response.err) {
-                throw new Error("Error in Register Course Applicant.");
+                console.log('Error in Register Course Applicant.' + err);
             }
+            else {
                 console.log('Fetched Register Course Applicant Response.');
+                isSuccess = true;
+            }
+        }
+        return Promise.resolve(isSuccess);
     },
 
-    updateCourseAssessment : async (req) => {
+    updateDisbursementDetails : async (req) => {
         console.log('Start Update Course Assessment.');
-        let response = await claimInstance.updateCourseAssessment(req.body.GrantRequest.caseId, req.body.GrantRequest.nettFee, 
+        let response = await claimInstance.updateDisbursementDetails(req.body.GrantRequest.caseId, req.body.GrantRequest.nettFee, 
             req.body.GrantRequest.attendance, req.body.GrantRequest.assessment);
     
         if (response.err) {
-            throw new Error("Error in Update Course Assessment Response.");
+            console.log('Error in Update Disbursement Details.' + err);
         }
-            console.log('Fetched Update Course Assessment Response.');
+        else {
+            console.log('Fetched Update Disbursement Details Response.');
+        }
+    },
+
+    updateEstimatedGrant : async (caseId, estimatedGrant) => {
+        console.log('Start Update Estimated Grant.');
+        let response = await claimInstance.updateEstimatedGrant(caseId, estimatedGrant);
+    
+        if (response.err) {
+            console.log('Error in Update Estimated Grant.' + err);
+        }
+        else {
+            console.log('Fetched Update Estimated Grant Response.');
+        }
+    },
+
+    updateExceptionStatus : async (caseId, exceptionStatus) => {
+        console.log('Start Update Exception Status.');
+        let response = await claimInstance.updateExceptionStatus(caseId, exceptionStatus);
+    
+        if (response.err) {
+            console.log('Error in Update Exception Status.' + err);
+        }
+        else {
+            console.log('Fetched Update Exception Status.');
+        }
     }
 }

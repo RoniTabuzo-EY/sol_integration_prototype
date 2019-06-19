@@ -13,23 +13,31 @@ app.use(bodyParser.json())
 app.post('/createGrantRequest', function (req, res) {
    
    //call smart contract 
-   grantRequestClient.register()
-   .then(function (res) {
-      console.log(res);
+   grantRequestClient.register(req)
+   .then(function (isSuccess) {
+      console.log(isSuccess);
 
-      if(res){
-         res.end("isSuccess:" + res);
+      if(isSuccess){
+         res.end("isSuccess:" + isSuccess);
 
          //call TGS
          var applicantDOB = dateFormat(req.body.GrantRequest.applicantDOB, "isoDate");   
          var dateOfApplication = dateFormat(req.body.GrantRequest.dateOfApplication, "isoDate");
          
-         var param = "?CourseID=" + req.body.GrantRequest.courseId + "&CaseID=" + req.body.GrantRequest.caseId + "&Name=" + req.body.GrantRequest.applicantName 
-            +"&NRIC=" + req.body.GrantRequest.applicantNRIC + "&DateOfBirth=" + applicantDOB + "&TpID="+ req.body.GrantRequest.tpId
-            +"&TpName=" + req.body.GrantRequest.tpName + "&DateOfApplication=" + dateOfApplication +"&CourseFee=" + req.body.GrantRequest.courseFee
-            +"&Citizenship=" + req.body.GrantRequest.applicantCitizenship;
+         var param = "?CourseID=" + req.body.GrantRequest.courseId + "&CaseID=" + req.body.GrantRequest.caseId;
          
-         tgsService.fnTGSCreateGrantRequest(param);
+         var registrationObj = {
+            Name: req.body.GrantRequest.applicantName,
+            NRIC: req.body.GrantRequest.applicantNRIC,
+            DateOfBirth: applicantDOB,
+            Citizenship: req.body.GrantRequest.applicantCitizenship,
+            TpID: req.body.GrantRequest.tpId,
+            TpName: req.body.GrantRequest.tpName,
+            DateOfApplication: dateOfApplication,
+            CourseFee: req.body.GrantRequest.courseFee
+        };
+
+         tgsService.fnTGSCreateGrantRequest(param, registrationObj);
       }
    })
    .catch(function (err) {
@@ -41,18 +49,25 @@ app.post('/createGrantRequest', function (req, res) {
 app.put('/updateGrantRequest', function (req, res) {
 
    //call smart contract 
-   grantRequestClient.updateCourseAssessment(req)
-   .then(function (res) {
-      console.log(res);
+   grantRequestClient.updateDisbursementDetails(req)
+   .then(function (isSuccess) {
+      console.log(isSuccess);
 
-      if(res){
-         res.end("isSuccess:" + res);
+      if(isSuccess){
+         res.end("isSuccess:" + isSuccess);
 
          //call TGS
-         var param = "?CaseID="+ req.body.GrantRequest.caseId + "&NettFee=" + req.body.GrantRequest.nettFee 
+         var param = "?CaseID="+ req.body.GrantRequest.caseId;
+         + "&NettFee=" + req.body.GrantRequest.nettFee 
          + "&Attendance=" + req.body.GrantRequest.attendance + "&Assessment=" + req.body.GrantRequest.assessment;
 
-         tgsService.fnTGSUpdateGrantRequest(param);
+         var dibursementDetailsObj = {
+            NettFee: req.body.GrantRequest.nettFee,
+            Attendance: req.body.GrantRequest.attendance,
+            Assessment: assessment
+        };
+
+         tgsService.fnTGSUpdateGrantRequest(param, dibursementDetailsObj);
       }
    })
    .catch(function (err) {
