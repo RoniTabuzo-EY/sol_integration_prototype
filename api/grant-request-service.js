@@ -14,34 +14,51 @@ app.post('/createGrantRequest', function (req, res) {
    
    //call smart contract 
    grantRequestClient.register()
-   .then(r => res.end("isSuccess:" + true))
-   .catch(e => res.end("isSuccess:" + false));
+   .then(function (res) {
+      console.log(res);
 
-   //call TGS
-   var applicantDOB = dateFormat(req.body.GrantRequest.applicantDOB, "isoDate");   
-   var dateOfApplication = dateFormat(req.body.GrantRequest.dateOfApplication, "isoDate");
-   
-   var param = "?CourseID=" + req.body.GrantRequest.courseId + "&CaseID=" + req.body.GrantRequest.caseId + "&Name=" + req.body.GrantRequest.applicantName 
-      +"&NRIC=" + req.body.GrantRequest.applicantNRIC + "&DateOfBirth=" + applicantDOB + "&TpID="+ req.body.GrantRequest.tpId
-      +"&TpName=" + req.body.GrantRequest.tpName + "&DateOfApplication=" + dateOfApplication +"&CourseFee=" + req.body.GrantRequest.courseFee
-      +"&Citizenship=" + req.body.GrantRequest.applicantCitizenship;
-   
-   tgsService.fnTGSCreateGrantRequest(param);
+      if(res){
+         res.end("isSuccess:" + res);
+
+         //call TGS
+         var applicantDOB = dateFormat(req.body.GrantRequest.applicantDOB, "isoDate");   
+         var dateOfApplication = dateFormat(req.body.GrantRequest.dateOfApplication, "isoDate");
+         
+         var param = "?CourseID=" + req.body.GrantRequest.courseId + "&CaseID=" + req.body.GrantRequest.caseId + "&Name=" + req.body.GrantRequest.applicantName 
+            +"&NRIC=" + req.body.GrantRequest.applicantNRIC + "&DateOfBirth=" + applicantDOB + "&TpID="+ req.body.GrantRequest.tpId
+            +"&TpName=" + req.body.GrantRequest.tpName + "&DateOfApplication=" + dateOfApplication +"&CourseFee=" + req.body.GrantRequest.courseFee
+            +"&Citizenship=" + req.body.GrantRequest.applicantCitizenship;
+         
+         tgsService.fnTGSCreateGrantRequest(param);
+      }
+   })
+   .catch(function (err) {
+      console.log(err);
+      res.end(err);
+   });
 })
 
 app.put('/updateGrantRequest', function (req, res) {
 
    //call smart contract 
-   grantRequestClient.updateCourseAssessment()
-   .then(r => res.end("isSuccess:" + true))
-   .catch(e => res.end("isSuccess:" + false));
-  
+   grantRequestClient.updateCourseAssessment(req)
+   .then(function (res) {
+      console.log(res);
 
-   //call TGS
-   var param = "?CaseID="+ req.body.GrantRequest.caseId + "&NettFee=" + req.body.GrantRequest.nettFee 
-   + "&Attendance=" + req.body.GrantRequest.attendance + "&Assessment=" + req.body.GrantRequest.assessment;
+      if(res){
+         res.end("isSuccess:" + res);
 
-   tgsService.fnTGSUpdateGrantRequest(param);
+         //call TGS
+         var param = "?CaseID="+ req.body.GrantRequest.caseId + "&NettFee=" + req.body.GrantRequest.nettFee 
+         + "&Attendance=" + req.body.GrantRequest.attendance + "&Assessment=" + req.body.GrantRequest.assessment;
+
+         tgsService.fnTGSUpdateGrantRequest(param);
+      }
+   })
+   .catch(function (err) {
+      console.log(err);
+      res.end(err);
+   });
 })
 
 var server = app.listen(8082, function () {
