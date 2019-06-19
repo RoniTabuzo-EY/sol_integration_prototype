@@ -31,30 +31,29 @@ contract('Claim' , (accounts)  => {
     assert.equal(applicant[6], "1991-04-24");
   });
 
+  it('Update Estimated Grant' , async() => {
+    await claimInstance.updateEstimatedGrant(1, 1000.00);
+    const assessment = await claimInstance.courseApplicants(1);
+    assert.equal(applicant[0], "CA-N-2019-945361");
+    assert.equal(applicant[7].toNumber(), 1000.00);
+  });
+
   it('Update Disbursement Details' , async() => {
     await claimInstance.updateCourseAssessment("CA-N-2019-945361", 1000.00, 83.00, 85.00);
     const caseIdKey = await claimInstance.convertStringToBytes32("CA-N-2019-945361");
-    const assessment = await claimInstance.courseAssessments(caseIdKey);
-    assert.equal(assessment[0], "CA-N-2019-945361");
-    assert.equal(assessment[1].toNumber(), 1000.00);
-    assert.equal(assessment[2].toNumber(), 83.00);
-    assert.equal(assessment[3].toNumber(), 85.00);
-  });
-
-  it('Update Estimated Grant' , async() => {
-    await claimInstance.updateEstimatedGrant("CA-N-2019-945361", 1000.00);
-    const caseIdKey = await claimInstance.convertStringToBytes32("CA-N-2019-945361");
-    const assessment = await claimInstance.courseAssessments(caseIdKey);
-    assert.equal(assessment[0], "CA-N-2019-945361");
-    assert.equal(assessment[1].toNumber(), 1000.00);
+    const registration = await claimInstance.courseRegistrations(caseIdKey);
+    assert.equal(registration[0], "CA-N-2019-945361");
+    assert.equal(registration[5].toNumber(), 1000.00);
+    assert.equal(registration[6].toNumber(), 83.00);
+    assert.equal(registration[7].toNumber(), 85.00);
   });
 
   it('Update Exception Status' , async() => {
     await claimInstance.updateExceptionStatus("CA-N-2019-945361", true);
     const caseIdKey = await claimInstance.convertStringToBytes32("CA-N-2019-945361");
-    const assessment = await claimInstance.courseAssessments(caseIdKey);
-    assert.equal(assessment[0], "CA-N-2019-945361");
-    assert.equal(assessment[1].toNumber(), true);
+    const registration = await claimInstance.courseRegistrations(caseIdKey);
+    assert.equal(registration[0], "CA-N-2019-945361");
+    assert.equal(registration[8].toNumber(), true);
   });
 
 })
