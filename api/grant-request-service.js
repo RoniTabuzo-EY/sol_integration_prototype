@@ -18,7 +18,7 @@ app.post('/createGrantRequest', function (req, res) {
       console.log(isSuccess);
 
       if(isSuccess){
-         res.end("isSuccess:" + isSuccess);
+         res.end(isSuccess);
 
          //call TGS
          var applicantDOB = dateFormat(req.body.GrantRequest.applicantDOB, "isoDate");   
@@ -37,16 +37,17 @@ app.post('/createGrantRequest', function (req, res) {
             CourseFee: req.body.GrantRequest.courseFee
         };
 
-         async() => {
-            var estimatedGrant = await tgsService.fnTGSCreateGrantRequest(param, registrationObj);
-
+         tgsService.fnTGSCreateGrantRequest(param, registrationObj)
+         .then(function (estimatedGrant) {
             //call smart contract to update estimated grant
             if(estimatedGrant > 0){
                grantRequestClient.updateEstimatedGrant(req.body.GrantRequest.courseId, estimatedGrant)
                .then(r => (console.log(r)))
                .catch(e => (console.log(e)))
             }
-         };
+         });
+
+         console.log("estimatedGrant = " + estimatedGrant);         
       }
    })
    .catch(function (err) {
@@ -63,7 +64,7 @@ app.put('/updateGrantRequest', function (req, res) {
       console.log(isSuccess);
 
       if(isSuccess){
-         res.end("isSuccess:" + isSuccess);
+         res.end(isSuccess);
 
          //call TGS
          var param = "?CaseID="+ req.body.GrantRequest.caseId;
@@ -76,14 +77,12 @@ app.put('/updateGrantRequest', function (req, res) {
             Assessment: assessment
         };
 
-        async() => {
-            var isExceptionFlow = await tgsService.fnTGSUpdateGrantRequest(param, dibursementDetailsObj);
+         var isExceptionFlow = tgsService.fnTGSUpdateGrantRequest(param, dibursementDetailsObj);
 
-            if(isExceptionFlow){
-               grantRequestClient.updateExceptionStatus(req.body.GrantRequest.caseId, isExceptionFlow)
-               .then(r => (console.log(r)))
-               .catch(e => (console.log(e)))
-            }
+         if(isExceptionFlow){
+            grantRequestClient.updateExceptionStatus(req.body.GrantRequest.caseId, isExceptionFlow)
+            .then(r => (console.log(r)))
+            .catch(e => (console.log(e)))
          }
       }
    })
