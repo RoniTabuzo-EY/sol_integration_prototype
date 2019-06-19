@@ -1,7 +1,8 @@
 const request = require('request');
 const rp = require('request-promise');
+const config = require('api-config');
 
-const tgsEndpoint = 'https://tgsdemo.sakurasystem.cloud/TGS/rest/TGS/';
+const tgsEndpoint = config.tgs.endpoint;
 const tgsCreateGrantRequestEndpoint = tgsEndpoint + 'CreateGrantRequest';
 const tgsUpdateGrantRequestEndpoint = tgsEndpoint + 'UpdateGrantRequest';
 
@@ -10,8 +11,8 @@ function getOptions(url, reqMethod){
         method: reqMethod,
         uri: url,
         auth: {
-            username: 'Dltuser',
-            password: 'Dltuserpassword'
+            username: config.tgs.username,
+            password: config.tgs.password
         }
     };
     return options;
