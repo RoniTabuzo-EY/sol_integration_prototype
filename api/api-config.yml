@@ -1,5 +1,5 @@
 #TGS
 tgs:
-  endpoint: https://tgsdemo.sakurasystem.cloud/TGS/rest/TGS/
-  username: Dltuser
-  password: Dltuserpassword
+    endpoint: https://tgsdemo.sakurasystem.cloud/TGS/rest/TGS/
+    username: Dltuser
+    password: Dltuserpassword
