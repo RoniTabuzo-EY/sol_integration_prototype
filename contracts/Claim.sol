@@ -10,7 +10,6 @@ contract Claim{
       uint netfee;
       uint attendancePercentage;
       uint assessmentPercentage;
-      uint estimatedGrant;
       bool isExceptionFlow;
     }
     
@@ -22,6 +21,7 @@ contract Claim{
       string applicantCitizenship;
       string dateOfApplication;
       string applicantDateOfBirth;
+      uint estimatedGrant;
     }
 
     mapping(bytes32 => CourseRegistration) public courseRegistrations;
@@ -46,7 +46,6 @@ contract Claim{
            netfee: 0,
            attendancePercentage: 0,
            assessmentPercentage: 0,
-           estimatedGrant: 0,
            isExceptionFlow: false
          });
     }
@@ -67,7 +66,8 @@ contract Claim{
           applicantNRIC: _applicantNRIC,
           applicantCitizenship: _applicantCitizenship,
           dateOfApplication: _dateOfApplication,
-          applicantDateOfBirth: _applicantDateOfBirth
+          applicantDateOfBirth: _applicantDateOfBirth,
+          estimatedGrant: 0
          });
     }
 
@@ -80,10 +80,9 @@ contract Claim{
             courseRegistration.assessmentPercentage = _assessmentPercentage;    
     }
     
-    function updateEstimatedGrant(string _caseId, uint _estimatedGrant) public{
-        caseIdKey = convertStringToBytes32(_caseId);
-        CourseRegistration storage courseRegistration = courseRegistrations[caseIdKey];
-        courseRegistration.estimatedGrant = _estimatedGrant;
+    function updateEstimatedGrant(uint _courseId, uint _estimatedGrant) public{
+        CourseApplicant storage courseApplicant = courseApplicants[_courseId];
+        courseApplicant.estimatedGrant = _estimatedGrant;
     }
     
     function updateExceptionStatus(string _caseId, bool _isExceptionFlow) public{
