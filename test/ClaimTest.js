@@ -1,5 +1,6 @@
 var Claim = artifacts.require("./Claim.sol");
-const assert = require('assert')
+const assert = require('assert');
+const web3Utils = require('web3-utils');
 
 let claimInstance;
 contract('Claim' , (accounts)  => {
@@ -10,8 +11,7 @@ contract('Claim' , (accounts)  => {
 
   it('Register Course' , async() => {
     await claimInstance.registerCourse("CA-N-2019-945361", 1, 2, "COMAT", 1000.00);
-    const caseIdKey = await claimInstance.convertStringToBytes32("CA-N-2019-945361");
-    const registration = await claimInstance.courseRegistrations(caseIdKey);
+    const registration = await claimInstance.courseRegistrations(web3Utils.toHex("CA-N-2019-945361"));
     assert.equal(registration[0], "CA-N-2019-945361");
     assert.equal(registration[1].toNumber(), 1);
     assert.equal(registration[2].toNumber(), 2);
@@ -33,15 +33,14 @@ contract('Claim' , (accounts)  => {
 
   it('Update Estimated Grant' , async() => {
     await claimInstance.updateEstimatedGrant(1, 1000.00);
-    const assessment = await claimInstance.courseApplicants(1);
+    const applicant = await claimInstance.courseApplicants(1);
     assert.equal(applicant[0], "CA-N-2019-945361");
     assert.equal(applicant[7].toNumber(), 1000.00);
   });
 
   it('Update Disbursement Details' , async() => {
-    await claimInstance.updateCourseAssessment("CA-N-2019-945361", 1000.00, 83.00, 85.00);
-    const caseIdKey = await claimInstance.convertStringToBytes32("CA-N-2019-945361");
-    const registration = await claimInstance.courseRegistrations(caseIdKey);
+    await claimInstance.updateDisbursementDetails("CA-N-2019-945361", 1000.00, 83.00, 85.00);
+    const registration = await claimInstance.courseRegistrations(web3Utils.toHex("CA-N-2019-945361"));
     assert.equal(registration[0], "CA-N-2019-945361");
     assert.equal(registration[5].toNumber(), 1000.00);
     assert.equal(registration[6].toNumber(), 83.00);
@@ -50,10 +49,9 @@ contract('Claim' , (accounts)  => {
 
   it('Update Exception Status' , async() => {
     await claimInstance.updateExceptionStatus("CA-N-2019-945361", true);
-    const caseIdKey = await claimInstance.convertStringToBytes32("CA-N-2019-945361");
-    const registration = await claimInstance.courseRegistrations(caseIdKey);
+    const registration = await claimInstance.courseRegistrations(web3Utils.toHex("CA-N-2019-945361"));
     assert.equal(registration[0], "CA-N-2019-945361");
-    assert.equal(registration[8].toNumber(), true);
+    assert.equal(registration[8], true);
   });
 
 })
