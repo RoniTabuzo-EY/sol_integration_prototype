@@ -18,7 +18,7 @@ app.post('/createGrantRequest', function (req, res) {
       console.log(isSuccess);
 
       if(isSuccess){
-         res.end(isSuccess);
+         res.end("isSuccess :"+isSuccess);
 
          //call TGS
          var applicantDOB = dateFormat(req.body.GrantRequest.applicantDOB, "isoDate");   
@@ -41,18 +41,20 @@ app.post('/createGrantRequest', function (req, res) {
          .then(function (estimatedGrant) {
             //call smart contract to update estimated grant
             if(estimatedGrant > 0){
-               grantRequestClient.updateEstimatedGrant(req.body.GrantRequest.courseId, estimatedGrant)
+               grantRequestClient.updateEstimatedGrant(req.body.GrantRequest.courseId, parseFloat(estimatedGrant))
                .then(r => (console.log(r)))
                .catch(e => (console.log(e)))
             }
+
+		 console.log("estimatedGrant = " + estimatedGrant); 
          });
 
-         console.log("estimatedGrant = " + estimatedGrant);         
+                
       }
    })
    .catch(function (err) {
       console.log(err);
-      res.end(err);
+      res.end("isSuccess : false");
    });
 })
 
@@ -64,7 +66,7 @@ app.put('/updateGrantRequest', function (req, res) {
       console.log(isSuccess);
 
       if(isSuccess){
-         res.end(isSuccess);
+         res.end("isSuccess :"+isSuccess);
 
          //call TGS
          var param = "?CaseID="+ req.body.GrantRequest.caseId;
@@ -88,7 +90,7 @@ app.put('/updateGrantRequest', function (req, res) {
    })
    .catch(function (err) {
       console.log(err);
-      res.end(err);
+      res.end("isSuccess : false");
    });
 })
 
