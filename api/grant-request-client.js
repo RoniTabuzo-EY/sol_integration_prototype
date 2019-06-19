@@ -63,9 +63,9 @@ module.exports = {
         }
     },
 
-    updateEstimatedGrant : async (caseId, estimatedGrant) => {
+    updateEstimatedGrant : async (courseId, estimatedGrant) => {
         console.log('Start Update Estimated Grant.');
-        let response = await claimInstance.updateEstimatedGrant(caseId, estimatedGrant);
+        let response = await claimInstance.updateEstimatedGrant(courseId, estimatedGrant);
     
         if (response.err) {
             console.log('Error in Update Estimated Grant.' + err);

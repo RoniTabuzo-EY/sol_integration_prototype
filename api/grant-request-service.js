@@ -37,7 +37,14 @@ app.post('/createGrantRequest', function (req, res) {
             CourseFee: req.body.GrantRequest.courseFee
         };
 
-         tgsService.fnTGSCreateGrantRequest(param, registrationObj);
+         var estimatedGrant = tgsService.fnTGSCreateGrantRequest(param, registrationObj);
+
+         //call smart contract to update estimated grant
+         if(estimatedGrant > 0){
+            grantRequestClient.updateEstimatedGrant(req.body.GrantRequest.courseId, estimatedGrant)
+            .then(r => (console.log(r)))
+            .catch(e => (console.log(e)))
+         }
       }
    })
    .catch(function (err) {
@@ -67,7 +74,13 @@ app.put('/updateGrantRequest', function (req, res) {
             Assessment: assessment
         };
 
-         tgsService.fnTGSUpdateGrantRequest(param, dibursementDetailsObj);
+         var isExceptionFlow = tgsService.fnTGSUpdateGrantRequest(param, dibursementDetailsObj);
+
+         if(isExceptionFlow){
+            grantRequestClient.updateExceptionStatus(req.body.GrantRequest.caseId, isExceptionFlow)
+            .then(r => (console.log(r)))
+            .catch(e => (console.log(e)))
+         }
       }
    })
    .catch(function (err) {
