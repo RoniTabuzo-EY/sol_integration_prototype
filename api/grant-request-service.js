@@ -42,14 +42,10 @@ app.post('/createGrantRequest', function (req, res) {
             //call smart contract to update estimated grant
             if(estimatedGrant > 0){
                grantRequestClient.updateEstimatedGrant(req.body.GrantRequest.courseId, parseFloat(estimatedGrant))
-               .then(r => (console.log(r)))
-               .catch(e => (console.log(e)))
             }
 
-		 console.log("estimatedGrant = " + estimatedGrant); 
-         });
-
-                
+		      console.log("estimatedGrant = " + estimatedGrant); 
+         }); 
       }
    })
    .catch(function (err) {
@@ -83,8 +79,6 @@ app.put('/updateGrantRequest', function (req, res) {
 
          if(isExceptionFlow){
             grantRequestClient.updateExceptionStatus(req.body.GrantRequest.caseId, isExceptionFlow)
-            .then(r => (console.log(r)))
-            .catch(e => (console.log(e)))
          }
       }
    })
@@ -94,8 +88,9 @@ app.put('/updateGrantRequest', function (req, res) {
    });
 })
 
-var server = app.listen(8082, function () {
+app.set('port',config.getGrantRequestServiceProperties.port);
+var server = app.listen(app.getPort(), function () {
    var host = server.address().address
-   var port = 8082
+   var port = app.getPort()
    console.log("App listening at http://%s:%s", host, port)
 })

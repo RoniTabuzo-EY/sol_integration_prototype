@@ -2,10 +2,11 @@ const contract = require('truffle-contract');
 const Web3 = require('web3');
 const path = require('path');
 const dateFormat = require('dateformat');
+const config = require('config/api-config');
 
 const claimJSON  = require(path.join(__dirname, '../build/contracts/Claim.json'));
 
-const web3Provider = new Web3.providers.HttpProvider('http://127.0.0.1:8545');
+const web3Provider = new Web3.providers.HttpProvider(config.getGrantRequestClientProperties.provider);
 web3 = new Web3(web3Provider);
 
 var claimContract = contract(claimJSON);

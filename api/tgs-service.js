@@ -11,8 +11,8 @@ function getOptions(url, reqMethod, obj){
         method: reqMethod,
         uri: url,
         auth: {
-            username: 'Dltuser',
-            password: 'Dltuserpassword'
+            username: config.getTGSProperties.username,
+            password: config.getTGSProperties.password
         },
         headers: {
             'Content-Type': 'application/json',
