@@ -7,11 +7,11 @@ let tgsProps = {
 };
 
 let grantRequestClientProps = {
-    provider = "http://127.0.0.1:8545"
+    provider: "http://127.0.0.1:8545"
 }
 
 let grantRequestServiceProps = {
-    port = "http://127.0.0.1:8545"
+    port: "8082"
 }
 
 module.exports.getTGSProperties = tgsProps;

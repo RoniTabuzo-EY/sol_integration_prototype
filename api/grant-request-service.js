@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const basicAuth =  require('basic-auth');
 const dateFormat = require('dateformat'); 
 
+const config = require('./api-config');
 var grantRequestClient = require('./grant-request-client');
 var tgsService = require('./tgs-service');
 
@@ -88,9 +89,9 @@ app.put('/updateGrantRequest', function (req, res) {
    });
 })
 
-app.set('port',config.getGrantRequestServiceProperties.port);
-var server = app.listen(app.getPort(), function () {
+var server = app.listen(config.getGrantRequestServiceProperties.port, function () {
    var host = server.address().address
-   var port = app.getPort()
+   var port = config.getGrantRequestServiceProperties.port
    console.log("App listening at http://%s:%s", host, port)
 })
+
