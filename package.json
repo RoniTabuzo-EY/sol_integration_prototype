@@ -1,5 +1,5 @@
 {
-  "name": "pet-shop",
+  "name": "main",
   "version": "1.0.0",
   "description": "",
   "main": "truffle.js",
@@ -14,5 +14,17 @@
   "license": "ISC",
   "devDependencies": {
     "lite-server": "^2.3.0"
+  },
+  "dependencies": {
+    "basic-auth": "^2.0.1",
+    "body-parser": "^1.19.0",
+    "config-yml": "^0.10.3",
+    "dateformat": "^3.0.3",
+    "express": "^4.17.1",
+    "path": "^0.12.7",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4",
+    "truffle-contract": "^4.0.20",
+    "web3": "^1.0.0-beta.55"
   }
 }
