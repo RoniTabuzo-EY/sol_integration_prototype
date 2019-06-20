@@ -1,7 +1,8 @@
 const request = require('request');
 const rp = require('request-promise');
+const config = require('config/api-config');
 
-const tgsEndpoint = 'https://tgsdemo.sakurasystem.cloud/TGS/rest/TGS/';
+const tgsEndpoint = config.getTGSProperties.endpoint;
 const tgsCreateGrantRequestEndpoint = tgsEndpoint + 'CreateGrantRequest';
 const tgsUpdateGrantRequestEndpoint = tgsEndpoint + 'UpdateGrantRequest';
 
