@@ -1,4 +1,4 @@
-pragma solidity ^0.4.0;
+pragma solidity >=0.4.21 <0.6.0;
 
 contract Claim{
     struct CourseRegistration{
@@ -11,6 +11,7 @@ contract Claim{
       uint attendancePercentage;
       uint assessmentPercentage;
       bool isExceptionFlow;
+      string dateOfApplication;
     }
     
     struct CourseApplicant{
@@ -19,22 +20,23 @@ contract Claim{
       string applicantName;
       string applicantNRIC;
       string applicantCitizenship;
-      string dateOfApplication;
       string applicantDateOfBirth;
+      uint grossMonthlyIncome;
       uint estimatedGrant;
     }
-
+    
     mapping(bytes32 => CourseRegistration) public courseRegistrations;
     mapping(uint => CourseApplicant) public courseApplicants;
     
     bytes32 caseIdKey;
     
     function registerCourse
-        (string _caseId,
+        (string memory _caseId,
           uint _courseId,
           uint _tpId,
-          string _tpName,
-          uint _courseFee) 
+          string memory _tpName,
+          uint _courseFee,
+          string memory _dateOfApplication) 
     public{
          caseIdKey = convertStringToBytes32(_caseId); 
          courseRegistrations[caseIdKey] = CourseRegistration({
@@ -42,22 +44,23 @@ contract Claim{
            caseId: _caseId,
            tpId: _tpId,
            tpName: _tpName,
-           courseFee: _courseFee,
+           courseFee: _courseFee,           
            netfee: 0,
            attendancePercentage: 0,
            assessmentPercentage: 0,
-           isExceptionFlow: false
+           isExceptionFlow: false,
+           dateOfApplication: _dateOfApplication
          });
     }
     
     function registerCourseApplicant
-        (string _caseId,
+        (string memory _caseId,
           uint _courseId,
-          string _applicantName,
-          string _applicantNRIC,
-          string _applicantCitizenship,
-          string _dateOfApplication,
-          string _applicantDateOfBirth) 
+          string memory _applicantName,
+          string memory _applicantNRIC,
+          string memory _applicantCitizenship,
+          string memory _applicantDateOfBirth,
+          uint _grossMonthlyIncome) 
     public{
           courseApplicants[_courseId] = CourseApplicant({
           caseId: _caseId,
@@ -65,14 +68,14 @@ contract Claim{
           applicantName: _applicantName,
           applicantNRIC: _applicantNRIC,
           applicantCitizenship: _applicantCitizenship,
-          dateOfApplication: _dateOfApplication,
           applicantDateOfBirth: _applicantDateOfBirth,
+          grossMonthlyIncome: _grossMonthlyIncome,
           estimatedGrant: 0
          });
     }
 
     function updateDisbursementDetails
-        (string _caseId, uint _netfee, uint _attendancePercentage, uint _assessmentPercentage) public{
+        (string memory _caseId, uint _netfee, uint _attendancePercentage, uint _assessmentPercentage) public{
             caseIdKey = convertStringToBytes32(_caseId);
             CourseRegistration storage courseRegistration = courseRegistrations[caseIdKey];
             courseRegistration.netfee = _netfee;    
@@ -85,16 +88,14 @@ contract Claim{
         courseApplicant.estimatedGrant = _estimatedGrant;
     }
     
-    function updateExceptionStatus(string _caseId, bool _isExceptionFlow) public{
+    function updateExceptionStatus(string memory _caseId, bool _isExceptionFlow) public{
         caseIdKey = convertStringToBytes32(_caseId);
         CourseRegistration storage courseRegistration = courseRegistrations[caseIdKey];
         courseRegistration.isExceptionFlow = _isExceptionFlow;
     }
     
-    function convertStringToBytes32(string key) returns (bytes32 ret) {
-        if (bytes(key).length > 32) {
-          throw;
-        }
+    function convertStringToBytes32(string memory key) public returns (bytes32 ret) {
+        require (bytes(key).length <= 32); 
     
         assembly {
           ret := mload(add(key, 32))
