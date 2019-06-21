@@ -2,21 +2,28 @@ const contract = require('truffle-contract');
 const Web3 = require('web3');
 const path = require('path');
 const dateFormat = require('dateformat');
-const config = require('config/api-config');
+const config = require('./api-config');
+var myAccount = "0x9fE1e1F499C1C9526c2d629363F0BC7e7cB2e122";
+var myPassword = "Grantdemo123456!"
 
 const claimJSON  = require(path.join(__dirname, '../build/contracts/Claim.json'));
 
 const web3Provider = new Web3.providers.HttpProvider(config.getGrantRequestClientProperties.provider);
-web3 = new Web3(web3Provider);
+const web3 = new Web3(web3Provider);
+web3.eth.personal.unlockAccount(myAccount, myPassword);
 
 var claimContract = contract(claimJSON);
 claimContract.setProvider(web3Provider);
+
 let claimInstance;
 
 (async () => {
-    var account = web3.eth.accounts[0]; 
+    var account = myAccount; 
+    console.log("account = "+myAccount)
+
+
     claimContract.defaults({from: account});
-    claimInstance = await claimContract.deployed();
+    claimInstance = await claimContract.at("0x51a1f95f83737d15cc1916396b18fe22be558a0d");
     console.log('Connected to Claim contract.');
 })().catch(err => {  
     console.error('Failed to connect to Claim contract.');  
@@ -25,20 +32,21 @@ let claimInstance;
 
 module.exports = {
     register : async (req) => {
-        console.log('Start Register Course.');
+        console.log('Start Register Course.', req.body);
         var isSuccess = false;
 
-        let response = await claimInstance.registerCourse(req.body.GrantRequest.caseId, req.body.GrantRequest.courseId, req.body.GrantRequest.tpId, req.body.GrantRequest.tpName, req.body.GrantRequest.courseFee);
+        var dateOfApplication = dateFormat(req.body.GrantRequest.dateOfApplication, "isoDate");
+
+        let response = await claimInstance.registerCourse(req.body.GrantRequest.caseId, req.body.GrantRequest.courseId, req.body.GrantRequest.tpId, req.body.GrantRequest.tpName, req.body.GrantRequest.courseFee, dateOfApplication);
         if (response.err) {
             console.log('Error in Register Course.' + err);
         }
         else {
             console.log('Fetched Register Course Response.');
             var applicantDOB = dateFormat(req.body.GrantRequest.applicantDOB, "isoDate");   
-            var dateOfApplication = dateFormat(req.body.GrantRequest.dateOfApplication, "isoDate");
 
             response = await claimInstance.registerCourseApplicant(req.body.GrantRequest.caseId, req.body.GrantRequest.courseId, req.body.GrantRequest.applicantName, req.body.GrantRequest.applicantNRIC,
-                req.body.GrantRequest.applicantCitizenship, dateOfApplication, applicantDOB);
+                req.body.GrantRequest.applicantCitizenship, applicantDOB, req.body.GrantRequest.grossMonthlyIncome);
 
             if (response.err) {
                 console.log('Error in Register Course Applicant.' + err);
@@ -52,7 +60,9 @@ module.exports = {
     },
 
     updateDisbursementDetails : async (req) => {
-        console.log('Start Update Course Assessment.');
+        console.log('Start Update Course Assessment. ');
+        var isSuccess = false;
+
         let response = await claimInstance.updateDisbursementDetails(req.body.GrantRequest.caseId, req.body.GrantRequest.nettFee, 
             req.body.GrantRequest.attendance, req.body.GrantRequest.assessment);
     
@@ -61,7 +71,9 @@ module.exports = {
         }
         else {
             console.log('Fetched Update Disbursement Details Response.');
+            isSuccess = true;
         }
+        return Promise.resolve(isSuccess);
     },
 
     updateEstimatedGrant : async (courseId, estimatedGrant) => {

@@ -35,7 +35,8 @@ app.post('/createGrantRequest', function (req, res) {
             TpID: req.body.GrantRequest.tpId,
             TpName: req.body.GrantRequest.tpName,
             DateOfApplication: dateOfApplication,
-            CourseFee: req.body.GrantRequest.courseFee
+            CourseFee: req.body.GrantRequest.courseFee,
+            GrossMonthlyIncome: req.body.GrantRequest.grossMonthlyIncome
         };
 
          tgsService.fnTGSCreateGrantRequest(param, registrationObj)
@@ -67,13 +68,13 @@ app.put('/updateGrantRequest', function (req, res) {
 
          //call TGS
          var param = "?CaseID="+ req.body.GrantRequest.caseId;
-         + "&NettFee=" + req.body.GrantRequest.nettFee 
-         + "&Attendance=" + req.body.GrantRequest.attendance + "&Assessment=" + req.body.GrantRequest.assessment;
+         //+ "&NettFee=" + req.body.GrantRequest.nettFee 
+         //+ "&Attendance=" + req.body.GrantRequest.attendance + "&Assessment=" + req.body.GrantRequest.assessment;
 
          var dibursementDetailsObj = {
             NettFee: req.body.GrantRequest.nettFee,
             Attendance: req.body.GrantRequest.attendance,
-            Assessment: assessment
+            Assessment: req.body.GrantRequest.assessment
         };
 
          var isExceptionFlow = tgsService.fnTGSUpdateGrantRequest(param, dibursementDetailsObj);
@@ -94,4 +95,3 @@ var server = app.listen(config.getGrantRequestServiceProperties.port, function (
    var port = config.getGrantRequestServiceProperties.port
    console.log("App listening at http://%s:%s", host, port)
 })
-
